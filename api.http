@@ -1,0 +1,55 @@
+### Schedule a day
+POST http://localhost:5001/api/doctor/schedule
+Content-Type: application/json
+X-CorrelationId: 8ea3fb2b-5acf-4805-bf2c-a56647cc7728
+X-CausationId: e07da067-7559-4876-a98a-d95bbeef897c
+
+{
+  "date": "2020-08-02",
+  "doctorId": "7e25fa3c-6123-46bf-9325-9611a88f2696",
+  "slots": [
+    {
+      "duration": "00:10:00",
+      "startTime": "14:30:00"
+    },
+    {
+      "duration": "00:10:00",
+      "startTime": "14:40:00"
+    },
+    {
+      "duration": "00:10:00",
+      "startTime": "14:50:00"
+    }
+  ]
+}
+
+### Get slots available on a date
+GET http://localhost:5001/api/slots/2020-08-02/available
+
+### Book a slot
+POST http://localhost:5001/api/slots/7e25fa3c-6123-46bf-9325-9611a88f2696_2020-08-01/book
+Content-Type: application/json
+X-CorrelationId: 8ea3fb2b-5acf-4805-bf2c-a56647cc7728
+X-CausationId: e07da067-7559-4876-a98a-d95bbeef897c
+
+{
+  "slotId": "eee9804d-651a-4f58-abd8-fced2fdb8637",
+  "patientId": "John Doe"
+}
+
+### Cancel slot booking
+POST https://localhost:5001/api/slots/7e25fa3c-6123-46bf-9325-9611a88f2696_2020-08-01/cancel-booking
+Content-Type: application/json
+X-CorrelationId: 8ea3fb2b-5acf-4805-bf2c-a56647cc7728
+X-CausationId: e07da067-7559-4876-a98a-d95bbeef897c
+
+{
+  "slotId": "eee9804d-651a-4f58-abd8-fced2fdb8637",
+  "reason": "No longer needed"
+}
+
+### Send day started event
+POST https://localhost:5001/api/calendar/2022-08-02/day-started
+Content-Type: application/json
+X-CorrelationId: 8ea3fb2b-5acf-4805-bf2c-a56647cc7728
+X-CausationId: e07da067-7559-4876-a98a-d95bbeef897c
