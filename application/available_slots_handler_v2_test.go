@@ -46,7 +46,7 @@ func TestAvailableSlotsHandlerV2(t *testing.T) {
 	p.EnableAtLeastOnceGorilla = false
 
 	p.SetHandlerFactory(func() infrastructure.EventHandler {
-		p.repository = mongodb.NewAvailableSlotsRepositoryV2(client.Database(uuid.NewString()))
+		p.repository = mongodb.NewAvailableSlotsRepository(client.Database(uuid.NewString()))
 		return NewAvailableSlotsProjectionV2(p.repository)
 	})
 
@@ -113,7 +113,7 @@ func (p *AvailableSlotsV2Tests) getSlotsAvailableOn(now time.Time) []readmodel.A
 type AvailableSlotsV2Tests struct {
 	infrastructure.HandlerTests
 
-	repository *mongodb.AvailableSlotsRepositoryV2
+	repository *mongodb.AvailableSlotsRepository
 
 	dayId      string
 	patientId  string
