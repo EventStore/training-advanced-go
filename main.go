@@ -78,7 +78,7 @@ func main() {
 	e.Use(middleware.Recover())
 	e.GET("/", hello)
 
-	s := controllers.NewSlotsController(dispatcher, availableSlotsRepo, eventStore)
+	s := controllers.NewSlotsController(dispatcher, availableSlotsRepo.AvailableSlotsRepository, eventStore)
 	s.Register("/api/", e)
 
 	e.Logger.Fatal(e.Start(":5001"))

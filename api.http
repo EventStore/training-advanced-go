@@ -38,7 +38,7 @@ X-CausationId: e07da067-7559-4876-a98a-d95bbeef897c
 }
 
 ### Cancel slot booking
-POST https://localhost:5001/api/slots/7e25fa3c-6123-46bf-9325-9611a88f2696_2020-08-01/cancel-booking
+POST http://localhost:5001/api/slots/7e25fa3c-6123-46bf-9325-9611a88f2696_2020-08-01/cancel-booking
 Content-Type: application/json
 X-CorrelationId: 8ea3fb2b-5acf-4805-bf2c-a56647cc7728
 X-CausationId: e07da067-7559-4876-a98a-d95bbeef897c
@@ -49,7 +49,7 @@ X-CausationId: e07da067-7559-4876-a98a-d95bbeef897c
 }
 
 ### Send day started event
-POST https://localhost:5001/api/calendar/2022-08-02/day-started
+POST http://localhost:5001/api/calendar/2022-08-02/day-started
 Content-Type: application/json
 X-CorrelationId: 8ea3fb2b-5acf-4805-bf2c-a56647cc7728
 X-CausationId: e07da067-7559-4876-a98a-d95bbeef897c

@@ -10,11 +10,11 @@ type AvailableSlotsProjectionV2 struct {
 	infrastructure.EventHandlerBase
 }
 
-func NewAvailableSlotsProjectionV2(r *mongodb.AvailableSlotsRepositoryV2) *AvailableSlotsProjectionV2 {
+func NewAvailableSlotsProjectionV2(r *mongodb.AvailableSlotsRepository) *AvailableSlotsProjectionV2 {
 	p := infrastructure.NewEventHandler()
 	p.When(events.SlotScheduled{}, func(e interface{}, m infrastructure.EventMetadata) error {
 		s := e.(events.SlotScheduled)
-		return r.AddSlot(mongodb.AvailableSlotV2{
+		return r.AddSlot(mongodb.AvailableSlot{
 			Id:        s.SlotId.String(),
 			DayId:     s.DayId,
 			Date:      s.StartTime.Format("02-01-2006"),

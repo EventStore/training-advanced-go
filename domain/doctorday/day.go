@@ -33,7 +33,6 @@ func NewDay() *Day {
 	a.Register(events.SlotBooked{}, func(e interface{}) { a.SlotBooked(e.(events.SlotBooked)) })
 	a.Register(events.SlotBookingCancelled{}, func(e interface{}) { a.SlotBookingCancelled(e.(events.SlotBookingCancelled)) })
 	a.Register(events.SlotScheduleCancelled{}, func(e interface{}) { a.SlotScheduleCancelled(e.(events.SlotScheduleCancelled)) })
-	a.Register(events.DayScheduleCancelled{}, func(e interface{}) { a.DayScheduleCancelled(e.(events.DayScheduleCancelled)) })
 	a.Register(events.DayScheduleArchived{}, func(e interface{}) { a.DayScheduleArchived(e.(events.DayScheduleArchived)) })
 	a.RegisterSnapshot(func(s interface{}) { a.loadSnapshot(s.(DaySnapshot)) }, a.getSnapshot)
 
@@ -151,33 +150,11 @@ func (s *Day) SlotBookingCancelled(e events.SlotBookingCancelled) {
 // Cancel day
 
 func (s *Day) Cancel() error {
-	err := s.isDayCancelledOrArchived()
-	if err != nil {
-		return err
-	}
-	err = s.isDayNotScheduled()
-	if err != nil {
-		return err
-	}
-
-	for _, bookedSlot := range s.slots.GetBookedSlots() {
-		s.Raise(events.NewSlotBookingCancelled(bookedSlot.Id, s.Id, DayCancelledReason))
-	}
-
-	for _, bookedSlot := range s.slots.GetAllSlots() {
-		s.Raise(events.NewSlotScheduleCancelled(bookedSlot.Id, s.Id))
-	}
-
-	s.Raise(events.NewDayScheduleCancelled(s.Id))
 	return nil
 }
 
 func (s *Day) SlotScheduleCancelled(e events.SlotScheduleCancelled) {
 	s.slots.Remove(NewSlotID(e.SlotId))
-}
-
-func (s *Day) DayScheduleCancelled(_ events.DayScheduleCancelled) {
-	s.isCancelled = true
 }
 
 // Archive day
