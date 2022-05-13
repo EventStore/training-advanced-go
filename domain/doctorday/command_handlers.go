@@ -93,21 +93,5 @@ func NewHandlers(repository DayRepository) CommandHandlers {
 		return nil
 	})
 
-	commandHandler.Register(commands.ArchiveDaySchedule{}, func(c infrastructure.Command, m infrastructure.CommandMetadata) error {
-		cmd := c.(commands.ArchiveDaySchedule)
-		day, err := repository.Get(NewDayIDFrom(cmd.DayId))
-		if err != nil {
-			return err
-		}
-
-		err = day.Archive()
-		if err != nil {
-			return err
-		}
-
-		repository.Save(day, m)
-		return nil
-	})
-
 	return commandHandler
 }

@@ -14,9 +14,9 @@ type DaySnapshot struct {
 	Slots []SlotSnapshot `json:"slots"`
 }
 
-func NewDaySnapshot(isArchived, isCancelled, isScheduled bool, slots []SlotSnapshot) DaySnapshot {
+func NewDaySnapshot(isCancelled, isScheduled bool, slots []SlotSnapshot) DaySnapshot {
 	return DaySnapshot{
-		IsArchived:  isArchived,
+		IsArchived:  false,
 		IsCancelled: isCancelled,
 		IsScheduled: isScheduled,
 		Slots:       slots,

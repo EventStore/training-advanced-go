@@ -3,7 +3,6 @@ package application
 import (
 	"time"
 
-	"github.com/EventStore/training-introduction-go/domain/doctorday"
 	"github.com/EventStore/training-introduction-go/domain/doctorday/commands"
 	"github.com/EventStore/training-introduction-go/domain/doctorday/events"
 	"github.com/EventStore/training-introduction-go/domain/readmodel"
@@ -41,20 +40,11 @@ func NewDayArchiverProcessManager(s eventsourcing.ColdStorage, a readmodel.Archi
 	})
 
 	h.When(events.DayScheduleArchived{}, func(e interface{}, _ infrastructure.EventMetadata) error {
-		d := e.(events.DayScheduleArchived)
+		//	d := e.(events.DayScheduleArchived)
 
-		streamName := eventsourcing.GetStreamNameWithId(&doctorday.Day{}, d.DayId)
-		events, err := es.LoadEventsFromStart(streamName)
-		if err != nil {
-			return err
-		}
-		s.SaveAll(events)
-		lastVersion, err := es.GetLastVersion(streamName)
-		if err != nil {
-			return err
-		}
+		//	streamName := eventsourcing.GetStreamNameWithId(&doctorday.Day{}, d.DayId)
 
-		return es.TruncateStream(streamName, lastVersion)
+		return nil
 	})
 
 	return &DayArchiverProcessManager{h}

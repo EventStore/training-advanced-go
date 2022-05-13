@@ -17,7 +17,6 @@ const (
 type Day struct {
 	eventsourcing.AggregateRootSnapshotBase
 
-	isArchived  bool
 	isCancelled bool
 	isScheduled bool
 	slots       Slots
@@ -34,7 +33,7 @@ func NewDay() *Day {
 	a.Register(events.SlotBookingCancelled{}, func(e interface{}) { a.SlotBookingCancelled(e.(events.SlotBookingCancelled)) })
 	a.Register(events.SlotScheduleCancelled{}, func(e interface{}) { a.SlotScheduleCancelled(e.(events.SlotScheduleCancelled)) })
 	a.Register(events.DayScheduleCancelled{}, func(e interface{}) { a.DayScheduleCancelled(e.(events.DayScheduleCancelled)) })
-	a.Register(events.DayScheduleArchived{}, func(e interface{}) { a.DayScheduleArchived(e.(events.DayScheduleArchived)) })
+
 	a.RegisterSnapshot(func(s interface{}) { a.loadSnapshot(s.(DaySnapshot)) }, a.getSnapshot)
 
 	return a
@@ -43,7 +42,7 @@ func NewDay() *Day {
 // Schedule day
 
 func (s *Day) ScheduleDay(doctorId DoctorID, date time.Time, slots []commands.ScheduledSlot) error {
-	err := s.isDayCancelledOrArchived()
+	err := s.isDayCancelled()
 	if err != nil {
 		return err
 	}
@@ -70,7 +69,7 @@ func (s *Day) DayScheduled(e events.DayScheduled) {
 // Schedule slot
 
 func (s *Day) ScheduleSlot(slotId uuid.UUID, start time.Time, duration time.Duration) error {
-	err := s.isDayCancelledOrArchived()
+	err := s.isDayCancelled()
 	if err != nil {
 		return err
 	}
@@ -94,7 +93,7 @@ func (s *Day) SlotScheduled(e events.SlotScheduled) {
 // Book slot
 
 func (s *Day) BookSlot(slotId SlotID, patientId PatientID) error {
-	err := s.isDayCancelledOrArchived()
+	err := s.isDayCancelled()
 	if err != nil {
 		return err
 	}
@@ -127,7 +126,7 @@ func (s *Day) SlotBooked(e events.SlotBooked) {
 // Cancel slot booking
 
 func (s *Day) CancelSlotBooking(slotId SlotID, reason string) error {
-	err := s.isDayCancelledOrArchived()
+	err := s.isDayCancelled()
 	if err != nil {
 		return err
 	}
@@ -151,7 +150,7 @@ func (s *Day) SlotBookingCancelled(e events.SlotBookingCancelled) {
 // Cancel day
 
 func (s *Day) Cancel() error {
-	err := s.isDayCancelledOrArchived()
+	err := s.isDayCancelled()
 	if err != nil {
 		return err
 	}
@@ -182,29 +181,7 @@ func (s *Day) DayScheduleCancelled(_ events.DayScheduleCancelled) {
 
 // Archive day
 
-func (s *Day) Archive() error {
-	err := s.isDayNotScheduled()
-	if err != nil {
-		return err
-	}
-
-	if s.isArchived {
-		return &DayScheduleAlreadyArchivedError{}
-	}
-
-	s.Raise(events.NewDayScheduleArchived(s.Id))
-	return nil
-}
-
-func (s *Day) DayScheduleArchived(_ events.DayScheduleArchived) {
-	s.isArchived = true
-}
-
-func (s *Day) isDayCancelledOrArchived() error {
-	if s.isArchived {
-		return &DayScheduleAlreadyArchivedError{}
-	}
-
+func (s *Day) isDayCancelled() error {
 	if s.isCancelled {
 		return &DayScheduleAlreadyCancelledError{}
 	}
@@ -228,11 +205,10 @@ func (s *Day) getSnapshot() interface{} {
 		slots = append(slots, NewSlotSnapshot(slot.Id, slot.StartTime, slot.Duration, slot.Booked))
 	}
 
-	return NewDaySnapshot(s.isArchived, s.isCancelled, s.isScheduled, slots)
+	return NewDaySnapshot(s.isCancelled, s.isScheduled, slots)
 }
 
 func (s *Day) loadSnapshot(snapshot DaySnapshot) {
-	s.isArchived = snapshot.IsArchived
 	s.isCancelled = snapshot.IsCancelled
 	s.isScheduled = snapshot.IsScheduled
 
