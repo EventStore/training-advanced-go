@@ -179,15 +179,11 @@ func (s *EsEventStore) loadEvents(streamName string, o esdb.ReadStreamOptions) (
 }
 
 func (s *EsEventStore) AppendSnapshot(streamName string, version int, snapshot interface{}) error {
-	eventData, err := s.esSerde.SerializeSnapshot(snapshot, eventsourcing.NewSnapshotMetadata(version))
-	if err != nil {
-		return err
-	}
 
-	options := esdb.AppendToStreamOptions{ExpectedRevision: esdb.Any{}}
-	snapshotName := s.GetFullStreamName("snapshot-" + streamName)
-	_, err = s.esdb.AppendToStream(context.Background(), snapshotName, options, eventData)
-	return err
+	// Serialize the snapshot
+	// Get snapshot stream name
+	// Append snapshot to stream
+	return nil
 }
 
 func (s *EsEventStore) LoadSnapshot(streamName string) (interface{}, *eventsourcing.SnapshotMetadata, error) {

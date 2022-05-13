@@ -44,13 +44,9 @@ func (s *EsAggregateStore) Load(aggregateId string, a eventsourcing.AggregateRoo
 	version := -1
 	streamName := eventsourcing.GetStreamNameWithId(a, aggregateId)
 
-	if sa, ok := a.(eventsourcing.AggregateRootSnapshot); ok {
-		sn, md, _ := s.store.LoadSnapshot(streamName)
-		if sn != nil && md != nil {
-			sa.LoadSnapshot(sn, md.Version)
-			version = md.Version + 1
-		}
-	}
+	// Load snapshot from the store
+	// If there is one then load it into the aggregate
+	// Return next expected version
 
 	events, err := s.store.LoadEvents(streamName, version)
 	if err != nil {
